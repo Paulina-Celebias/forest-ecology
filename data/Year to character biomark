@@ -1,0 +1,13 @@
+source('./Packages/test.r')
+# list.files()
+# list.files('~/Packages')
+# path <- paste(getwd(),"Packages/test.r",sep='/')
+# path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+# dane <- read.csv2(path, sep = ";")
+
+# nrow(dane)
+
+# head(dane);
+
+# dane <- dane[order(dane$year_time),] 
+# dane$Year <- as.character(dane$year_time)

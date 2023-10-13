@@ -1,0 +1,19 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+# dane$Year<-relevel(factor(dane$Year), ref="2020")
+
+caching1<-glmmTMB(cached~Exploration_rate*Year+Sex*Year+scale(Body_mass)*Year
+                  +(1|eartag)+ (1|plot) + (1|station),family=binomial,data=dane)
+summary(caching1)
+Anova(caching1) 
+
+
+tab_model(caching1,  auto.label = T, show.re.var=F, show.ngroups = F,
+          pred.labels = c("Intercept", "Mass:year", "BLUP", "Sex"),
+          dv.labels = c("Probability of caching"))

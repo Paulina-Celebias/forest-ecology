@@ -1,0 +1,12 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+
+boxplot(dane$dispersal_distance ~ Sex*Year,
+        varwidth = TRUE, 
+        data = dane,
+        xlab     = "sex",
+        ylab     = "Seed dispersal distance")
+abline(h = mean(dane$dispersal_distance, na.rm = TRUE), 
+       lty = 2)

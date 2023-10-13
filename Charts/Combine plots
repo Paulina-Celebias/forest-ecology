@@ -1,0 +1,199 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+# Plot eaten
+e1 <- glmmTMB(eaten~Exploration_rate*Year+Sex*Year+Body_mass*Year
+              +(1|eartag)+ (1|plot)+(1|station),data=dane)
+
+
+lista <- list(Exploration_rate= seq(min(dane$Exploration_rate), max(dane$Exploration_rate), by = 0.1))
+
+mm <- emmip(
+  e1,
+  ~Exploration_rate * Year,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+mm$eaten <- mm$yvar
+
+plot_eaten <- ggplot() + 
+  geom_line(data=mm, aes(y=eaten, x=Exploration_rate, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  scale_linetype_manual(values=c("dashed", "solid", "dashed"))+
+  theme_classic() + 
+  geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Exploration_rate, fill=Year), alpha=0.1) + 
+  ylab("Probability of consumption") +xlab("Exploration rate") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+plot_eaten
+
+plot_eaten <- plot_eaten + theme(legend.position = "none")
+
+# Plot cached 2
+c2 <- glmmTMB(cached~Exploration_rate*Year+Sex*Year+Body_mass*Year
+              +(1|eartag)+ (1|plot) + (1|station),family=binomial,data=dane)
+
+
+lista <- list(Body_mass= seq(min(10), max(51), by = 1))
+
+mm2 <- emmip(
+  c2,
+  ~Body_mass * Year,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+mm2$cached <- mm2$yvar
+
+
+plot_cached2 <- ggplot() + 
+  geom_line(data=mm2, aes(y=cached, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  theme_classic() + 
+  scale_linetype_manual(values=c("solid", "solid", "solid")) +
+  geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
+  ylab("Probability of caching") +xlab("Body mass [g]") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+plot_cached2
+plot_cached2<- plot_cached2+ theme(legend.position = "none")
+
+# Plot cached
+c1 <- glmmTMB(cached~Exploration_rate*Year+Sex*Year+Body_mass*Year
+              +(1|eartag)+ (1|plot) + (1|station),family=binomial,data=dane)
+
+lista <- list(Exploration_rate= seq(min(dane$Exploration_rate), max(dane$Exploration_rate), by = 0.1))
+
+mm <- emmip(
+  c1,
+  ~Exploration_rate * Year,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+mm$cached <- mm$yvar
+
+plot_cached <- ggplot() + 
+  geom_line(data=mm, aes(y=cached, x=Exploration_rate, color=Year, linetype=Year), alpha=0.7, size=2) + 
+  scale_linetype_manual(values=c("dashed", "solid", "dashed")) +
+  theme_classic() + 
+  geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Exploration_rate, fill=Year), alpha=0.1) + 
+  ylab("Probability of cachineg") +xlab("Exploration rate") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+plot_cached
+
+plot_cached <- plot_cached+ theme(legend.position = "none")
+
+# Plot cached sex
+c3<- glmmTMB(cached~Exploration_rate*Year+Sex*Year+Body_mass*Year
+             +(1|eartag)+ (1|plot) + (1|station),family=binomial,data=dane)
+
+mm<-emmip(c3,~Sex*Year,type="response", CIs=T, plotit=F)
+
+logit2prob<-function(logit){
+  odds<-exp(logit)
+  prob<-odds/(1+odds)
+  return(prob)
+}
+
+mm$cached <- mm$yvar
+mm$LCLt <- mm$LCL
+mm$UCLt <- mm$UCL
+
+plot_c3 <- ggplot() + 
+  theme_classic() + 
+  geom_col(data=mm, aes(y=cached, x=Year, fill=Sex), position="dodge", linewidth=2)
+
+
+plot_c3<-plot_c3+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, group=Sex), position=position_dodge(0.9), width=0.2) + 
+  ylab("Probability of caching") +xlab("Year") +
+  scale_fill_manual(values = c("lightpink3","lightskyblue2")) +
+  theme(text=element_text(size=15))
+
+
+plot_c3
+
+# Plot distance
+lista <- list(Body_mass= seq(min(10), max(51), by = 1))
+
+d2 <- glmmTMB(sqrt(dispersal_distance)~Body_mass*Year+Exploration_rate+Sex2+
+                (1|eartag)+ (1|plot) + (1|station),data=dane)
+
+Anova(d2)
+
+mm2 <- emmip(
+  d2,
+  ~Body_mass * Year,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+
+plot_distance2 <- ggplot() + 
+  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year, linetype=Year), alpha=0.7, linewidth=2) + 
+  scale_linetype_manual(values=c("dashed", "dashed", "solid")) +
+  theme_classic() + 
+  geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
+  ylab("Seed dispercal distance [m]") +xlab("Body mass [g]") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+
+
+plot_distance2
+plot_distance2<- plot_distance2+ theme(legend.position = "none")
+
+
+# Plot distance tree
+t2 <- glmmTMB(sqrt(dispersal_tree)~scale(Body_mass)*Year +Sex+ Exploration_rate
+              +(1|eartag)+ (1|station),data=dane)
+
+
+lista2 <- list(Body_mass= seq(min(10), max(51), by = 1))
+
+mm2 <- emmip(
+  t2,
+  ~Body_mass * Year,
+  at = lista2,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+
+plot_tree2 <- ggplot() + 
+  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  theme_classic() + 
+  scale_linetype_manual(values=c("dashed", "dashed", "solid"))+
+  geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
+  ylab("Distance from nearest tree [m]") +xlab("Body mass [g]") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+
+plot_tree2
+
+plot_tree2 <- plot_tree2 + theme(legend.position = "none")
+# plot_tree<-plot_tree + scale_fill_colorblind(name = "year", labels = c("2020", "2021", "2022"))
+# scale_color_colorblind(name = "Year", labels = c("2020", "2021", "2022"))
+
+
+# Combine
+grid.arrange(plot_eaten, plot_cached2,plot_cached, plot_c3,plot_distance2,plot_tree2,
+             nrow=2, ncol=3)

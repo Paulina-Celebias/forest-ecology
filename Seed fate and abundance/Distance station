@@ -1,0 +1,16 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+distance_abu3<-glmmTMB(sqrt(dispersal_distance)~Body_mass*Abundance+Exploration_rate+Sex2+
+                         +(1|eartag)+ (1|plot) + (1|station),data=dane)
+summary(distance_abu3)
+Anova(distance_abu3)
+
+
+tab_model(distance_abu3,  auto.label = T, show.re.var=F, show.ngroups = F,
+          pred.labels = c("Intercept", "Exploration rate: Abundance", "Mass", "Sex"),
+          dv.labels = c("Probability of consumption"))

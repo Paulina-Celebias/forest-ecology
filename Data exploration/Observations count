@@ -1,0 +1,18 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+
+summary(dane)
+head(dane)
+
+# Number of observations per year
+table(dane$year_time)
+
+#Number of observations per plot
+table(dane$plot)
+
+#number of individuals
+a<-unique(dane$eartag)
+length(a)
+#196

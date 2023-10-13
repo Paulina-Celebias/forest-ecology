@@ -1,0 +1,28 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+tree_abu1<-glmmTMB(sqrt(dispersal_tree)~Exploration_rate*Abundance+Sex*Abundance+scale(Body_mass)*Abundance
+               +(1|eartag)+(1|plot)+ (1|station),data=dane)
+summary(tree_abu1)
+Anova(tree_abu1)
+
+
+tree_abu2<-glmmTMB(sqrt(dispersal_tree)~Sex*Abundance+scale(Body_mass)*Abundance + Exploration_rate
+               +(1|eartag)+(1|station),data=dane)
+summary(tree_abu2)
+Anova(tree_abu2)
+
+
+tree_abu3<-glmmTMB(sqrt(dispersal_tree)~scale(Body_mass)*Abundance +Sex+ Exploration_rate
+               +(1|eartag)+ (1|station),data=dane)
+summary(tree_abu3)
+Anova(tree_abu3)
+
+
+tab_model(tree_abu2,  auto.label = T, show.re.var=F, show.ngroups = F,
+          pred.labels = c("Intercept", "Sex:Abundance", "Body mass:Abundance", "Exploration rate"),
+          dv.labels = c("Distance of dispersal from the nearest tree"))

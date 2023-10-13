@@ -1,0 +1,28 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+eating_abu1<-glmmTMB(eaten~Exploration_rate*Abundance+Sex*Abundance+Body_mass*Abundance
+                 +(1|eartag)+ (1|plot)+(1|station), family = binomial, data=dane)
+summary(eating_abu1)
+Anova(eating_abu1)
+
+
+eating_abu2<-glmmTMB(eaten~Exploration_rate*Abundance+Sex+Body_mass*Abundance
+                     +(1|eartag)+ (1|plot)+(1|station), family = binomial, data=dane)
+summary(eating_abu2)
+Anova(eating_abu2)
+
+
+eating_abu3<-glmmTMB(eaten~Exploration_rate*Abundance+Body_mass+Sex
+                 +(1|eartag)+ (1|plot)+ (1|station), family = binomial,data=dane)
+summary(eating_abu3)
+Anova(eating_abu3)
+
+tab_model(eating_abu3,  auto.label = T, show.re.var=F, show.ngroups = F,
+          pred.labels = c("Intercept", "Exploration rate: Abundance", "Mass", "Sex"),
+          dv.labels = c("Probability of consumption"))

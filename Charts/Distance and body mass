@@ -1,0 +1,39 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+lista <- list(Body_mass= seq(min(10), max(51), by = 1))
+
+
+d2 <- glmmTMB(sqrt(dispersal_distance)~Body_mass*Year+Exploration_rate+Sex2+
+                (1|eartag)+ (1|plot) + (1|station),data=dane)
+
+Anova(d2)
+
+mm2 <- emmip(
+  d2,
+  ~Body_mass * Year,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+
+plot_distance2 <- ggplot() + 
+  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year, linetype=Year), alpha=0.7, linewidth=2) + 
+  scale_linetype_manual(values=c("dashed", "dashed", "solid")) +
+  theme_classic() + 
+  geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
+  ylab("Seed dispercal distance [m]") +xlab("Body mass [g]") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+
+
+plot_distance2
+plot_distance2<- plot_distance2+ theme(legend.position = "none")

@@ -1,0 +1,35 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+c3<- glmmTMB(cached~Exploration_rate*Year+Sex*Year+Body_mass*Year
+             +(1|eartag)+ (1|plot) + (1|station),family=binomial,data=dane)
+
+mm<-emmip(c3,~Sex*Year,type="response", CIs=T, plotit=F)
+
+logit2prob<-function(logit){
+  odds<-exp(logit)
+  prob<-odds/(1+odds)
+  return(prob)
+}
+
+mm$cached <- mm$yvar
+mm$LCLt <- mm$LCL
+mm$UCLt <- mm$UCL
+
+plot_c3 <- ggplot() + 
+  theme_classic() + 
+  geom_col(data=mm, aes(y=cached, x=Year, fill=Sex), position="dodge", linewidth=2)
+
+
+plot_c3<-plot_c3+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, group=Sex), position=position_dodge(0.9), width=0.2) + 
+  ylab("Probability of caching") +xlab("Year") +
+  scale_fill_manual(values = c("lightpink3","lightskyblue2")) +
+  theme(text=element_text(size=15))
+
+
+plot_c3

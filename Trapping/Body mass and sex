@@ -1,0 +1,14 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+mass_sex <- ddply(trapping, "sex", summarise, grp.mean=mean(Body_mass))
+
+
+ggplot(trapping,aes(x=Sex, y=Body_mass,color=Sex))+geom_boxplot()+
+  facet_wrap(~Year)+theme_classic()+
+  geom_jitter(trapping, mapping=aes(x=Sex, y=Body_mass, color=Sex), size=1)+
+  labs(color="Sex")

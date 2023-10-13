@@ -1,0 +1,28 @@
+source('Packages/Packages.r')
+pers <- read.csv2('data/short_2.csv', sep = ";")
+
+
+blup <- glmmTMB(cross ~ scale(openfield_no, scale=FALSE) +
+                  scale(mass) + sex +
+                  (1|eartag),
+                data = pers,
+                ziformula = ~1,
+                family = nbinom1)
+ 
+plot(blup)
+summary(blup)
+ 
+# Wyci?gniecie jednego blupa dla jednego eartaga
+blup_2 <- ranef(blup)
+blup_2$cond$eartag
+
+df_BLUPS_B <- data_frame(eartag = row.names(blup_2$cond$eartag),
+                         BLUP_B = blup_2$cond$eartag[,"(Intercept)"])
+df_BLUPS_B
+
+
+# Data for BLUP in Biomark file
+vv <- merge(dane, df_BLUPS_B, by.eartag = by)
+head(vv)
+
+# write.csv2(vv,file="BIOMARK-BLUP_2.csv")

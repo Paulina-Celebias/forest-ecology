@@ -1,0 +1,35 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+cross_sex_mass<-glmmTMB(Cross~scale(Body_mass) + Sex + Openfield_number*Year + (1|plot)+(1|eartag),
+                        ziformula=~1, data=trapping, family = nbinom2)
+
+summary(cross_sex_mass)
+Anova(cross_sex_mass)
+
+lista <- list(Body_mass= seq(min(0), max(51), by = 1))
+mm <- emmip(
+  cross_sex_mass,
+  ~Body_mass + Sex,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+plot_cross_mass_sex <- ggplot() + 
+  geom_line(data=mm, aes(y=yvar, x=Body_mass, color=Sex), alpha=0.7, size=2) + 
+  theme_classic() + 
+  geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Sex), alpha=0.1) + 
+  labs(fill="Sex", colour="Sex") +
+  ylim(0,NA) +
+  ylab("Crossings") +xlab("Body mass [g]") + 
+  scale_linetype_manual(values=c("solid","dashed")) +
+  theme(text=element_text(size=14))
+
+plot_cross_mass_sex

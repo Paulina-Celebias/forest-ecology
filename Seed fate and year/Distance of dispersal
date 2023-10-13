@@ -1,0 +1,34 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+hist(dane$dispersal_distance)
+hist(sqrt(dane$dispersal_distance))
+
+distance1<-glmmTMB(sqrt(dispersal_distance)~Exploration_rate*Year+Sex*Year+Body_mass*Year
+                   +(1|eartag)+ (1|plot) + (1|station),data=dane)
+summary(distance1)
+Anova(distance1) 
+
+distance2<-glmmTMB(sqrt(dispersal_distance)~Exploration_rate+Body_mass*Year+Sex*Year+
+                     (1|eartag)+ (1|plot)+(1|station),data=dane)
+summary(distance2)
+Anova(distance2)
+
+
+# dane$Year<-relevel(factor(dane$Year), ref="2020")
+
+distance3<-glmmTMB(sqrt(dispersal_distance)~Body_mass*Year+Exploration_rate+Sex2+
+                     (1|eartag)+ (1|plot) + (1|station),data=dane)
+summary(distance3)
+Anova(distance3)
+
+tab_model(distance3,  auto.label = T, show.re.var=F, show.ngroups = F,
+          pred.labels = c("Intercept", "Mass:year", "Cross (BLUP)", "Sex"),
+          dv.labels = c("Distance of dispersal from the station"))
+
+tab_model(distance3)

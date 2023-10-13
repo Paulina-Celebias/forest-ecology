@@ -1,0 +1,40 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+
+t <- glmmTMB(sqrt(dispersal_tree)~scale(Body_mass)*Year +Sex+ Exploration_rate
+              +(1|eartag)+ (1|station),data=dane)
+
+
+lista <- list(Exploration_rate= seq(min(dane$Exploration_rate), 
+                                    max(dane$Exploration_rate), by = 0.1))
+
+mm <- emmip(
+  t,
+  ~Exploration_rate * Year,
+  at = lista,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+
+plot_tree <- ggplot() + 
+  geom_line(data=mm, aes(y=yvar, x=Exploration_rate, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  theme_classic() + 
+  scale_linetype_manual(values=c("solid", "solid", "solid"))+
+  geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Exploration_rate, fill=Year), alpha=0.1) + 
+  ylab("Distance from nearest tree [m]") +xlab("Exploration rate") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+
+plot_tree
+
+plot_tree <- plot_tree + theme(legend.position = "none")
+# plot_tree<-plot_tree + scale_fill_colorblind(name = "year", labels = c("2020", "2021", "2022"))
+# scale_color_colorblind(name = "Year", labels = c("2020", "2021", "2022"))

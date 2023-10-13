@@ -1,0 +1,2 @@
+trapping <- trapping[order(trapping$year_time),] 
+trapping$Year <- as.character(trapping$year_time)

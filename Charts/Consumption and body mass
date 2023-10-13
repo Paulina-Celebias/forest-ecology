@@ -1,0 +1,36 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+e2 <- glmmTMB(eaten~Exploration_rate*Year+Sex*Year+Body_mass*Year
+              +(1|eartag)+ (1|plot)+(1|station),data=dane)
+
+
+lista2 <- list(Body_mass= seq(min(10), max(51), by = 1))
+
+mm2 <- emmip(
+  e2,
+  ~Body_mass * Year,
+  at = lista2,
+  type="response",
+  CIs=TRUE,
+  plotit = FALSE
+)
+
+mm2$eaten <- mm2$yvar
+
+plot_eaten2 <- ggplot() + 
+  geom_line(data=mm2, aes(y=eaten, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  scale_linetype_manual(values=c("solid", "dashed", "dashed"))+
+  theme_classic() + 
+  geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
+  ylab("Probability of consumption") +xlab("Body mass [g]") + 
+  theme(text=element_text(size=14))+
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
+  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+plot_eaten2
+
+plot_eaten2 <- plot_eaten2 + theme(legend.position = "none")

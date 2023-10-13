@@ -1,0 +1,11 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+boxplot(dane$Exploration_rate ~ Sex + Year,
+        col=c("coral1","cadetblue2"),
+        varwidth = TRUE, 
+        data = dane,
+        frame = FALSE,
+        xlab     = "Sex",
+        ylab     = "Exploration rate")

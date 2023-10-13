@@ -1,0 +1,34 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+dane <- dane[order(dane$year_time),] 
+dane$Year <- as.character(dane$year_time)
+
+e2<- glmmTMB(eaten~Exploration_rate*Year+Sex*Year+Body_mass*Year
+             +(1|eartag)+ (1|plot)+(1|station),data=dane)
+
+mm<-emmip(e2,~Sex*Year,type="response", CIs=T, plotit=F)
+
+logit2prob<-function(logit){
+  odds<-exp(logit)
+  prob<-odds/(1+odds)
+  return(prob)
+}
+
+mm$eaten <- mm$yvar
+mm$LCLt <- mm$LCL
+mm$UCLt <- mm$UCL
+
+plot_e2 <- ggplot() + 
+  theme_classic() + 
+  geom_col(data=mm, aes(y=eaten, x=Year, fill=Sex), position="dodge", size=2)
+
+
+plot_e2<-plot_e2+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, group=Sex), position=position_dodge(0.9), width=0.2) + 
+  ylab("Probability of consumption") +xlab("Year") +
+  scale_fill_manual(values = c("lightpink3","lightskyblue2")) +
+  theme(text=element_text(size=15))
+
+
+plot_e2

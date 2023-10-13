@@ -1,0 +1,23 @@
+path <- paste(getwd(),"TRAPPING-sorted3.csv",sep='/')
+trapping <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+blup <- glmmTMB(cross ~ scale(openfield_no, scale=FALSE) +
+                scale(mass) + sex +
+                 (1|eartag),
+                 data = trapping,
+                 ziformula = ~1,
+                 family = nbinom1)
+ 
+blup_2 <- ranef(blup)
+blup_2$cond$eartag
+ 
+df_BLUPS_B <- tibble(eartag = row.names(blup_2$cond$eartag),
+                         BLUP_B = blup_2$cond$eartag[,"(Intercept)"])
+df_BLUPS_B
+
+ 
+vv <- merge(trapping, df_BLUPS_B, by.eartag = by)
+head(vv)
+ 
+write.csv2(vv,file="Trapping_BLUP.csv")

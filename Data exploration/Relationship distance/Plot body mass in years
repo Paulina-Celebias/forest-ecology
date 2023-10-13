@@ -1,0 +1,17 @@
+path <- paste(getwd(),"data/BIOMARK-BLUP_2.csv",sep='/')
+dane <- read.csv2(path, sep = ";")
+source('./Packages/test.r')
+
+
+p <- ggplot()
+p <- p + geom_point(data = dane, 
+                    aes(y = dispersal_distance, x = Body_mass),
+                    shape = 1, 
+                    size = 1)
+p <- p + xlab("Body mass (g)") + 
+  ylab("Seed dispersal distance (cm)")
+p <- p + theme(text = element_text(size=15))
+p <- p + geom_smooth(data = dane, 
+                     aes(x = Body_mass, y = dispersal_distance), method = "lm")
+p <- p + facet_wrap( ~ Year, scales = "fixed")
+p
