@@ -9,12 +9,12 @@ dane$Year <- as.character(dane$year_time)
 hist(dane$dispersal_distance)
 hist(sqrt(dane$dispersal_distance))
 
-distance1<-glmmTMB(sqrt(dispersal_distance)~Exploration_rate*Year+Sex*Year+Body_mass*Year
+distance1<-glmmTMB(sqrt(dispersal_distance)~Exploration_rate*Year+Sex2*Year+Body_mass*Year
                    +(1|eartag)+ (1|plot) + (1|station),data=dane)
 summary(distance1)
 Anova(distance1) 
 
-distance2<-glmmTMB(sqrt(dispersal_distance)~Exploration_rate+Body_mass*Year+Sex*Year+
+distance2<-glmmTMB(sqrt(dispersal_distance)~Exploration_rate+Body_mass*Year+Sex2*Year+
                      (1|eartag)+ (1|plot)+(1|station),data=dane)
 summary(distance2)
 Anova(distance2)

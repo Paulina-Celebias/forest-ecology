@@ -5,7 +5,7 @@ source('./Packages/test.r')
 dane <- dane[order(dane$year_time),] 
 dane$Year <- as.character(dane$year_time)
 
-males<-glmmTMB(sqrt(dispersal_distance)~sex2 + Body_mass + Exploration_rate + Year
+males<-glmmTMB(sqrt(dispersal_distance)~Sex2 + Body_mass + Exploration_rate + Year
                +(1|eartag)+(1|plot)+ (1|station),data=dane)
 summary(males)
 Anova(males)
