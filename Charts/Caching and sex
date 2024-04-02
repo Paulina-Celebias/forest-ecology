@@ -23,7 +23,7 @@ mm$UCLt <- mm$UCL
 
 plot_c3 <- ggplot() + 
   theme_classic() + 
-  geom_col(data=mm, aes(y=cached, x=Year, fill=Sex), position="dodge", linewidth=2)
+  geom_col(data=mm, aes(y=cached, x=Year, fill=Sex), position="dodge", linewidth=1)
 
 
 plot_c3<-plot_c3+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, group=Sex), position=position_dodge(0.9), width=0.2) + 
@@ -33,3 +33,5 @@ plot_c3<-plot_c3+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, gr
 
 
 plot_c3
+
+ggsave(file="plots/caching-and-sex.png", width=4, height=4, dpi=300)

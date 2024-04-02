@@ -23,14 +23,15 @@ mm2 <- emmip(
 mm2$eaten <- mm2$yvar
 
 plot_eaten2 <- ggplot() + 
-  geom_line(data=mm2, aes(y=eaten, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  geom_line(data=mm2, aes(y=eaten, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=1) + 
   scale_linetype_manual(values=c("solid", "dashed", "dashed"))+
   theme_classic() + 
   geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
   ylab("Probability of consumption") +xlab("Body mass [g]") + 
   theme(text=element_text(size=14))+
-  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
-  scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
+  scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
 plot_eaten2
 
 plot_eaten2 <- plot_eaten2 + theme(legend.position = "none")
+
+ggsave(file="plots/consumption-and-body-mass.png", width=4, height=4, dpi=300)

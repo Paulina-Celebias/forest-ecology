@@ -25,11 +25,11 @@ mm2 <- emmip(
 
 
 plot_distance2 <- ggplot() + 
-  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year, linetype=Year), alpha=0.7, linewidth=2) + 
+  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year, linetype=Year), alpha=0.7, linewidth=1) + 
   scale_linetype_manual(values=c("dashed", "dashed", "solid")) +
   theme_classic() + 
   geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
-  ylab("Seed dispercal distance [m]") +xlab("Body mass [g]") + 
+  ylab("Seed dispersal distance [m]") +xlab("Body mass [g]") + 
   theme(text=element_text(size=14))+
   scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
   scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
@@ -37,3 +37,5 @@ plot_distance2 <- ggplot() +
 
 plot_distance2
 plot_distance2<- plot_distance2+ theme(legend.position = "none")
+
+ggsave(file="plots/distance-and-mass.png", width=4, height=4, dpi=300)

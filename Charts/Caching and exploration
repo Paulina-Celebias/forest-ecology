@@ -23,14 +23,16 @@ mm <- emmip(
 mm$cached <- mm$yvar
 
 plot_cached <- ggplot() + 
-  geom_line(data=mm, aes(y=cached, x=Exploration_rate, color=Year, linetype=Year), alpha=0.7, size=2) + 
+  geom_line(data=mm, aes(y=cached, x=Exploration_rate, color=Year, linetype=Year), alpha=0.7, size=1) + 
   scale_linetype_manual(values=c("dashed", "solid", "dashed")) +
   theme_classic() + 
   geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Exploration_rate, fill=Year), alpha=0.1) + 
-  ylab("Probability of cachineg") +xlab("Exploration rate") + 
+  ylab("Probability of caching") +xlab("Exploration rate") + 
   theme(text=element_text(size=14))+
   scale_color_manual(values = c("mediumpurple3","orange2","grey30"))+
   scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
 plot_cached
 
 plot_cached <- plot_cached+ theme(legend.position = "none")
+
+ggsave(file="plots/caching-and-exploration.png", width=4, height=4, dpi=300)

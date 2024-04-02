@@ -24,7 +24,7 @@ mm <- emmip(
 mm$eaten <- mm$yvar
 
 plot_eaten <- ggplot() + 
-  geom_line(data=mm, aes(y=eaten, x=Exploration_rate, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  geom_line(data=mm, aes(y=eaten, x=Exploration_rate, color=Year,linetype=Year), alpha=0.7, size=1) + 
   scale_linetype_manual(values=c("dashed", "solid", "dashed"))+
   theme_classic() + 
   geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Exploration_rate, fill=Year), alpha=0.1) + 
@@ -35,3 +35,5 @@ plot_eaten <- ggplot() +
 plot_eaten
 
 plot_eaten <- plot_eaten + theme(legend.position = "none")
+
+ggsave(file="plots/consumption-and-exploration.png", width=4, height=4, dpi=300)

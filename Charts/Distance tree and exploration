@@ -24,7 +24,7 @@ mm <- emmip(
 
 
 plot_tree <- ggplot() + 
-  geom_line(data=mm, aes(y=yvar, x=Exploration_rate, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  geom_line(data=mm, aes(y=yvar, x=Exploration_rate, color=Year,linetype=Year), alpha=0.7, size=1) + 
   theme_classic() + 
   scale_linetype_manual(values=c("solid", "solid", "solid"))+
   geom_ribbon(data=mm, aes(ymin = LCL, ymax = UCL, x=Exploration_rate, fill=Year), alpha=0.1) + 
@@ -38,3 +38,5 @@ plot_tree
 plot_tree <- plot_tree + theme(legend.position = "none")
 # plot_tree<-plot_tree + scale_fill_colorblind(name = "year", labels = c("2020", "2021", "2022"))
 # scale_color_colorblind(name = "Year", labels = c("2020", "2021", "2022"))
+
+ggsave(file="plots/tree-and-exploration.png", width=4, height=4, dpi=300)

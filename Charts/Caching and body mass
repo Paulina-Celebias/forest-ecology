@@ -25,7 +25,7 @@ mm2$cached <- mm2$yvar
 
 
 plot_cached2 <- ggplot() + 
-  geom_line(data=mm2, aes(y=cached, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  geom_line(data=mm2, aes(y=cached, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=1) + 
   theme_classic() + 
   scale_linetype_manual(values=c("solid", "solid", "solid")) +
   geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
@@ -35,3 +35,5 @@ plot_cached2 <- ggplot() +
   scale_fill_manual(values = c("mediumpurple3","orange2","grey30"))
 plot_cached2
 plot_cached2<- plot_cached2+ theme(legend.position = "none")
+
+ggsave(file="plots/caching-and-body-mass.png", width=4, height=4, dpi=300)

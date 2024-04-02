@@ -23,7 +23,7 @@ mm2 <- emmip(
 
 
 plot_tree2 <- ggplot() + 
-  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=2) + 
+  geom_line(data=mm2, aes(y=yvar, x=Body_mass, color=Year,linetype=Year), alpha=0.7, size=1) + 
   theme_classic() + 
   scale_linetype_manual(values=c("dashed", "dashed", "solid"))+
   geom_ribbon(data=mm2, aes(ymin = LCL, ymax = UCL, x=Body_mass, fill=Year), alpha=0.1) + 
@@ -37,3 +37,5 @@ plot_tree2
 plot_tree2 <- plot_tree2 + theme(legend.position = "none")
 # plot_tree<-plot_tree + scale_fill_colorblind(name = "year", labels = c("2020", "2021", "2022"))
 # scale_color_colorblind(name = "Year", labels = c("2020", "2021", "2022"))
+
+ggsave(file="plots/tree-and-body-mass.png", width=4, height=4, dpi=300)

@@ -22,7 +22,7 @@ mm$UCLt <- mm$UCL
 
 plot_e2 <- ggplot() + 
   theme_classic() + 
-  geom_col(data=mm, aes(y=eaten, x=Year, fill=Sex), position="dodge", size=2)
+  geom_col(data=mm, aes(y=eaten, x=Year, fill=Sex), position="dodge", size=1)
 
 
 plot_e2<-plot_e2+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, group=Sex), position=position_dodge(0.9), width=0.2) + 
@@ -32,3 +32,5 @@ plot_e2<-plot_e2+geom_errorbar(data=mm, aes(ymin = LCLt, ymax = UCLt, x=Year, gr
 
 
 plot_e2
+
+ggsave(file="plots/consumptipn-and-sex.png", width=4, height=4, dpi=300)
